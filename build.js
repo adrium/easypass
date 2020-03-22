@@ -176,7 +176,7 @@ export let chrome = series(chromeMain, addReloader, files => files.dest("build-c
 
 export let crx = series(chromeMain, function(files)
 {
-  return files.pipe(zip, `pfp-${VERSION}.zip`).dest("build-chrome");
+  return files.pipe(zip, `aep-${VERSION}.zip`).dest("build-chrome");
 });
 
 export let watchChrome = series(chrome, function()
@@ -205,7 +205,7 @@ export let firefox = series(firefoxMain, addReloader, files => files.dest("build
 
 export let xpi = series(firefoxMain, function(files)
 {
-  return files.pipe(zip, `pfp-${VERSION}.xpi`).dest("build-firefox");
+  return files.pipe(zip, `aep-${VERSION}.xpi`).dest("build-firefox");
 });
 
 export let watchFirefox = series(firefox, function()
@@ -252,7 +252,7 @@ export let web = series(webMain, files => files.dest("build-web"));
 
 export let webZip = series(webMain, function(files)
 {
-  return files.pipe(zip, `pfp-web-${VERSION}.zip`).dest("build-web");
+  return files.pipe(zip, `aep-web-${VERSION}.zip`).dest("build-web");
 });
 
 export let test = series(validate, function()
