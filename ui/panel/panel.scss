@@ -238,10 +238,16 @@ a
 {
   flex-grow: 1;
   padding: $inline-spacing;
+  cursor: pointer;
 
   &:hover
   {
     background-color: $hover-background;
+  }
+
+  &:focus
+  {
+    background-color: $success-background;
   }
 }
 
