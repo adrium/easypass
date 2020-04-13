@@ -548,6 +548,13 @@ a.iconic-link:hover
   font-size: 120%;
   font-weight: bold;
   color: $text-color;
+  opacity: 0.25;
+  cursor: default;
+
+  &:hover
+  {
+    text-decoration: none;
+  }
 }
 
 .sync-provider-icon

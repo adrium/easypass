@@ -8,9 +8,11 @@
   "reauthorize": "Reauthorize…",
   "do_sync": "Upload now",
   "disable": "Disable sync",
+  "disabled_heading": "Sync disabled",
+  "disabled_text": "Sync is disabled for the official release due to missing API keys.",
   "disable_confirmation": "Do you really want to disable sync functionality? Your data will no longer be backed up to your provider automatically.",
 
-  "selection_label": "Please select your storage provider:",
+  "selection_label": "Available storage providers:",
   "how_heading": "How does this work?",
   "how_text": "You grant AEP access to a directory within your personal account on Dropbox or another storage provider. This access will be used to upload a file with encrypted data regularly. It's the same data as with your manual backup, but you can connect multiple devices to the same account and changes will propagate to all of them automatically – assuming that they all use the same master password.",
   "security_heading": "Is this safe?",

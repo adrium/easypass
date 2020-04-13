@@ -50,19 +50,23 @@
         </a>
       </div>
 
-      <div class="block-start sync-section">{{ $t("how_heading") }}</div>
+      <div class="block-start sync-section">{{ $t("disabled_heading") }}</div>
       <div class="sync-explanation">
-        {{ $t("how_text") }}
+        {{ $t("disabled_text") }}
+        <!--
         <external-link type="documentation" param="sync">
           {{ $t(".learn_more") }}
         </external-link>
+        -->
       </div>
 
+      <!--
       <div class="block-start sync-section">{{ $t("security_heading") }}</div>
       <div class="sync-explanation">{{ $t("security_text") }}</div>
 
       <div class="block-start sync-section">{{ $t("no_account_heading") }}</div>
       <div class="sync-explanation">{{ $t("no_account_text") }}</div>
+      -->
     </template>
 
     <manual-auth v-if="manualAuthCallback"
@@ -148,6 +152,9 @@ export default {
       });
     },
     authorize(provider, username)
+    {
+    },
+    authorizeDisabled(provider, username)
     {
       if (provider == "remotestorage" && !username)
       {
