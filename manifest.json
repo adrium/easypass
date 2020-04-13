@@ -17,9 +17,7 @@
   "homepage_url": "https://github.com/adrium/easypass",
   "version": "2.2.6",
   "permissions": [
-    "tabs",
-    "http://*/*",
-    "https://*/*",
+    "activeTab",
     "storage",
     "clipboardWrite",
     "unlimitedStorage"
