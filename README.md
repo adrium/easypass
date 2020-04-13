@@ -1,6 +1,10 @@
 Adrium Easy Pass
 ================
 
+![screenshot1](media/screenshot1.png)
+
+[Download from Chrome Web Store](https://chrome.google.com/webstore/detail/adrium-easy-pass/ebigikdfolbipomeaknpooibomohhhhk)
+
 This is a fork of [PfP: Pain-free Passwords](https://pfp.works).
 It is possible to use multiple master passwords and use drag-and-drop for passwords to other applications.
 
