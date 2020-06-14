@@ -14,7 +14,7 @@
   "description": "__MSG_description__",
   "author": "Wladimir Palant / Adrium",
   "homepage_url": "https://github.com/adrium/easypass",
-  "version": "2.2.3",
+  "version": "2.2.3.2020",
   "permissions": [
     "activeTab",
     "storage",

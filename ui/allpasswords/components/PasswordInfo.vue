@@ -25,8 +25,8 @@
       <iconic-link class="password-remove-link" :title="$t('/(panel)(components)(PasswordMenu)remove_password')" @click="removePassword" />
     </div>
     <div class="password-info">
-      <template v-if="password.type == 'generated2'">
-        <div class="password-type">{{ $t("/(panel)(components)(PasswordEntry)password_type_generated2") }}</div>
+      <template v-if="password.type.indexOf('generated') == 0">
+        <div class="password-type">{{ $t("/(panel)(components)(PasswordEntry)password_type_" + password.type) }}</div>
         <div>{{ $t("/(panel)(components)(PasswordEntry)password_length") }} {{ password.length }}</div>
         <div>{{ $t("/(panel)(components)(PasswordEntry)allowed_characters") }}  {{ allowedChars }}</div>
       </template>

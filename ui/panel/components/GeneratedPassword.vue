@@ -33,6 +33,9 @@
         <label><input v-model="number" type="checkbox">789</label>
         <label><input v-model="symbol" type="checkbox">+^;</label>
       </div>
+      <div class="charsets-container">
+        <label :title="$t('type_aep_title')"><input v-model="type_aep" type="checkbox">{{ $t("type_aep_label") }}</label>
+      </div>
 
       <!-- Charset checkboxes are aggregated into a single hidden input to simplify validation -->
       <validated-input v-model="charsets" :error.sync="charsetsError" :visible="false" @validate="validateCharsets" />
@@ -98,6 +101,7 @@ export default {
       upper: getProp("upper", true),
       number: getProp("number", true),
       symbol: getProp("symbol", true),
+      type_aep: getProp("type_aep", false),
       charsets: "",
       charsetsError: null,
       keepNotes: !!this.password
@@ -148,6 +152,7 @@ export default {
         upper: this.upper,
         number: this.number,
         symbol: this.symbol,
+        type_aep: this.type_aep,
         notes: this.keepNotes ? this.password.notes : null
       }, this.options.replacing).then(pwdList =>
       {
