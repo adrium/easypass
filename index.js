@@ -2771,13 +2771,7 @@ function toTypedArray(obj) {
  * version 2.0 (the "License"). You can obtain a copy of the License at
  * http://mozilla.org/MPL/2.0/.
  */
-var AES_KEY_SIZE = 256; // I, l, O, 0, 1 excluded because of potential confusion. ", ', \ excluded
-// because of common bugs in web interfaces (magic quotes).
-
-var LOWERCASE = "abcdefghjkmnpqrstuvwxyz";
-var UPPERCASE = "ABCDEFGHJKMNPQRSTUVWXYZ";
-var NUMBER = "23456789";
-var SYMBOL = "!#$%&()*+,-./:;<=>?@[]^_{|}~";
+var AES_KEY_SIZE = 256;
 var encoder = new TextEncoder("utf-8");
 var decoder = new TextDecoder("utf-8");
 var maxJobId = 0;
@@ -2858,16 +2852,6 @@ function deriveBitsLegacy(password, salt, length) {
     });
   });
 }
-
-function derivePassword(params) {
-  var salt = params.domain + "\0" + params.name;
-  if (params.revision) salt += "\0" + params.revision;
-  return Promise.resolve().then(function () {
-    return deriveBits(params.masterPassword, salt, params.length);
-  }).then(function (array) {
-    return toPassword(array, params.lower, params.upper, params.number, params.symbol);
-  });
-}
 function deriveKey(params) {
   return Promise.resolve().then(function () {
     return deriveBits(params.masterPassword, atob(params.salt), AES_KEY_SIZE / 8);
@@ -2932,78 +2916,167 @@ function getDigest(hmacSecret, data) {
   });
 }
 function derivePasswordLegacy(params) {
+  params.type = "generated";
+  return derivePasswordUniversal(params);
+}
+function derivePasswordUniversal(params) {
+  var types = {
+    generated: {
+      hasher: deriveBitsLegacy,
+      stringifier: toPassword
+    },
+    generated2: {
+      hasher: deriveBits,
+      stringifier: toPassword
+    },
+    generatedAep: {
+      hasher: deriveBits,
+      stringifier: toPasswordAep
+    }
+  };
+  var impl = types[params.type];
+  if (impl == null) throw "unknown_generation_method";
   var salt = params.domain + "\0" + params.name;
   if (params.revision) salt += "\0" + params.revision;
   return Promise.resolve().then(function () {
-    return deriveBitsLegacy(params.masterPassword, salt, params.length);
+    return impl.hasher(params.masterPassword, salt, params.length);
   }).then(function (array) {
-    return toPassword(array, params.lower, params.upper, params.number, params.symbol);
+    return impl.stringifier(array, params.lower, params.upper, params.number, params.symbol);
   });
 }
 
 function toPassword(array, lower, upper, number, symbol) {
-  var charsets = [];
-  if (lower) charsets.push(LOWERCASE);
-  if (upper) charsets.push(UPPERCASE);
-  if (number) charsets.push(NUMBER);
-  if (symbol) charsets.push(SYMBOL);
+  var charsettings = [];
+  if (lower) charsettings.push({
+    charset: "abcdefghjkmnpqrstuvwxyz",
+    min: 1,
+    max: 1024
+  });
+  if (upper) charsettings.push({
+    charset: "ABCDEFGHJKMNPQRSTUVWXYZ",
+    min: 1,
+    max: 1024
+  });
+  if (number) charsettings.push({
+    charset: "23456789",
+    min: 1,
+    max: 1024
+  });
+  if (symbol) charsettings.push({
+    charset: "!#$%&()*+,-./:;<=>?@[]^_{|}~",
+    min: 1,
+    max: 1024
+  });
+  return toPasswordUniversal(array, charsettings);
+}
 
-  var lengthSum = function lengthSum(previous, current) {
-    return previous + current.length;
-  };
+function toPasswordAep(array, lower, upper, number, symbol) {
+  var charsettings = [];
+  if (lower) charsettings.push({
+    charset: "abcdefghijklmnopqrstuvwxyz",
+    min: 2,
+    max: 1024
+  });
+  if (upper) charsettings.push({
+    charset: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    min: 2,
+    max: 1024
+  });
+  if (number) charsettings.push({
+    charset: "0123456789",
+    min: 2,
+    max: 1024
+  });
+  if (symbol) charsettings.push({
+    charset: "!#$%&*+-?@",
+    min: 2,
+    max: 1024
+  });
+  return toPasswordUniversal(array, charsettings);
+}
 
-  var numChars = charsets.reduce(lengthSum, 0);
-  var seen = new Set();
-  var result = [];
+function toPasswordUniversal(array, charsettings) {
+  var _iterator = _createForOfIteratorHelper(charsettings),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var _s3 = _step.value;
+      _s3.count = 0;
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  var result = "";
 
   for (var i = 0; i < array.length; i++) {
-    if (charsets.length - seen.size >= array.length - i) {
-      var _iterator = _createForOfIteratorHelper(seen.values()),
-          _step;
+    var sum = 0,
+        max = 0,
+        cnt = 0;
 
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var value = _step.value;
-
-          var _index = charsets.indexOf(value);
-
-          if (_index >= 0) charsets.splice(_index, 1);
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-
-      seen.clear();
-      numChars = charsets.reduce(lengthSum, 0);
-    }
-
-    var index = array[i] % numChars;
-
-    var _iterator2 = _createForOfIteratorHelper(charsets),
+    var _iterator2 = _createForOfIteratorHelper(charsettings),
         _step2;
 
     try {
       for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var charset = _step2.value;
-
-        if (index < charset.length) {
-          result.push(charset[index]);
-          seen.add(charset);
-          break;
-        }
-
-        index -= charset.length;
+        var s = _step2.value;
+        cnt = Math.max(0, s.min - s.count);
+        max = Math.max(max, cnt);
+        sum += cnt;
       }
     } catch (err) {
       _iterator2.e(err);
     } finally {
       _iterator2.f();
     }
+
+    cnt = 0;
+
+    var _iterator3 = _createForOfIteratorHelper(charsettings),
+        _step3;
+
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var _s = _step3.value;
+        _s.enabled = _s.count < _s.max && (sum < array.length - result.length || _s.min - _s.count == max);
+        cnt += _s.enabled ? _s.charset.length : 0;
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
+    }
+
+    var index = cnt > 0 ? array[i] % cnt : 0;
+
+    var _iterator4 = _createForOfIteratorHelper(charsettings),
+        _step4;
+
+    try {
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var _s2 = _step4.value;
+
+        if (_s2.enabled) {
+          if (index < _s2.charset.length) {
+            result += _s2.charset[index];
+            _s2.count++;
+            break;
+          }
+
+          index -= _s2.charset.length;
+        }
+      }
+    } catch (err) {
+      _iterator4.e(err);
+    } finally {
+      _iterator4.f();
+    }
   }
 
-  return result.join("");
+  return result;
 }
 
 var pearsonHashPermutations = null;
@@ -3502,31 +3575,12 @@ function getPassword(passwordData) {
   }).then(function (passwordData) {
     if (!passwordData) throw "no_such_password";
     if (passwordData.type == "stored") return passwordData.password;
-
-    if (passwordData.type == "generated2") {
-      var site = passwordData.site,
-          name = passwordData.name,
-          revision = passwordData.revision,
-          length = passwordData.length,
-          lower = passwordData.lower,
-          upper = passwordData.upper,
-          number = passwordData.number,
-          symbol = passwordData.symbol;
-      var params = {
-        masterPassword: masterPasswordCallback(),
-        domain: site,
-        name: name,
-        revision: revision,
-        length: length,
-        lower: lower,
-        upper: upper,
-        number: number,
-        symbol: symbol
-      };
-      return derivePassword(params);
-    }
-
-    throw "unknown_generation_method";
+    var params = {
+      masterPassword: masterPasswordCallback(),
+      domain: passwordData.site
+    };
+    Object.assign(params, passwordData);
+    return derivePasswordUniversal(params);
   });
 }
 function getAllPasswords() {
@@ -3676,7 +3730,8 @@ function addGenerated(_ref5, replaceExisting) {
       upper = _ref5.upper,
       number = _ref5.number,
       symbol = _ref5.symbol,
-      notes = _ref5.notes;
+      notes = _ref5.notes,
+      type_aep = _ref5.type_aep;
   return lock.acquire().then(function () {
     return _ensureSiteData(site);
   }).then(function () {
@@ -3690,7 +3745,7 @@ function addGenerated(_ref5, replaceExisting) {
         exists = _ref7[1];
 
     if (exists) throw "alreadyExists";
-    var type = "generated2";
+    var type = type_aep ? "generatedAep" : "generated2";
     var data = {
       site: site,
       name: name,
@@ -5340,21 +5395,21 @@ function decryptThenImport(data, masterPass, setSite, setPassword) {
     try {
       var _loop = function _loop() {
         var entry = _step.value;
-        if (!entry.type) mergeActions.push(setSite(entry));else if (entry.type == "generated2" || entry.type == "generated") {
+        if (!entry.type) mergeActions.push(setSite(entry));else if (entry.type.indexOf("generated") == 0) {
           if (masterPass || entry.type == "generated") {
             var params = {
               masterPassword: masterPass || getMasterPassword(),
               domain: entry.site,
               name: entry.name,
               revision: entry.revision,
+              type: entry.type,
               length: entry.length,
               lower: entry.lower,
               upper: entry.upper,
               number: entry.number,
               symbol: entry.symbol
             };
-            var action;
-            if (entry.type == "generated2") action = derivePassword(params);else action = derivePasswordLegacy(params);
+            var action = derivePasswordUniversal(params);
             mergeActions.push(action.then(function (password) {
               var data = {
                 type: "stored",
@@ -5623,12 +5678,6 @@ events$2.on("dataModified", function () {
   "ok": "OK",
   "cancel": "Cancel",
   "no_site_placeholder": "(none)",
-  "panel@App@select_site": "Select site",
-  "panel@App@password_list": "Password list",
-  "panel@App@sync": "Data sync",
-  "panel@App@settings": "Settings",
-  "panel@App@lock_passwords": "Lock passwords",
-  "web@App@compat_message": "Your browser lacks the required functionality for this application. At least Mozilla Firefox 43, Google Chrome 51, Opera 38, Apple Safari 11 or Microsoft Edge 12 is required.",
   "allpasswords@App@title": "All passwords known to AEP",
   "allpasswords@App@show_notes": "Show notes",
   "allpasswords@App@show_passwords": "Show passwords",
@@ -5657,9 +5706,25 @@ events$2.on("dataModified", function () {
   "components@UnknownError@close": "Close",
   "components@UnknownError@description": "The operation failed unexpectedly.",
   "components@UnknownError@more": "Show error message",
+  "panel@App@select_site": "Select site",
+  "panel@App@password_list": "Password list",
+  "panel@App@sync": "Data sync",
+  "panel@App@settings": "Settings",
+  "panel@App@lock_passwords": "Lock passwords",
+  "web@App@compat_message": "Your browser lacks the required functionality for this application. At least Mozilla Firefox 43, Google Chrome 51, Opera 38, Apple Safari 11 or Microsoft Edge 12 is required.",
+  "allpasswords@components@GlobalActions@export": "Export password definitions to a file",
+  "allpasswords@components@GlobalActions@import": "Import password definitions from a file",
+  "allpasswords@components@GlobalActions@print": "Print",
+  "allpasswords@components@GlobalActions@import_with_master": "It seems that this backup was created with a different master password. It can still be imported, all generated passwords will be converted to stored passwords however.",
+  "allpasswords@components@GlobalActions@import_confirm": "Your existing passwords might get overwritten. Are you sure you want to proceed?",
+  "allpasswords@components@PasswordInfo@password_type_stored": "Stored password, recovery code below",
+  "allpasswords@components@PasswordInfo@recovery_code_explanation": "Recovery codes can be entered instead of the password when adding a stored password. They are safe to print, decryption is only possible with the right master password.",
+  "allpasswords@components@SiteInfo@aliases_label": "Aliases:",
   "panel@components@GeneratedPassword@replace_warning": "Making this a generated password will change its value. Make sure that you already filled in \"current password\" in the website's password change form.",
   "panel@components@GeneratedPassword@keep_notes": "Keep notes from original password",
   "panel@components@GeneratedPassword@length_label": "Length:",
+  "panel@components@GeneratedPassword@type_aep_label": "AEP generation method",
+  "panel@components@GeneratedPassword@type_aep_title": "Generates passwords that are more compatible with certain sites (ensures 2 characters of every charset and uses less symbols)",
   "panel@components@GeneratedPassword@allowed_characters_label": "Allowed characters:",
   "panel@components@GeneratedPassword@submit": "Generate password",
   "panel@components@GeneratedPassword@no_characters_selected": "At least one character set has to be selected.",
@@ -5667,6 +5732,7 @@ events$2.on("dataModified", function () {
   "panel@components@NotesEditor@notes_label": "Password notes:",
   "panel@components@NotesEditor@submit": "Save notes",
   "panel@components@PasswordEntry@password_menu": "All actions",
+  "panel@components@PasswordEntry@password_type_generatedAep": "Generated AEP password",
   "panel@components@PasswordEntry@password_type_generated2": "Generated password",
   "panel@components@PasswordEntry@password_type_stored": "Stored password",
   "panel@components@PasswordEntry@password_length": "Length:",
@@ -5760,15 +5826,7 @@ events$2.on("dataModified", function () {
   "panel@pages@Sync@sync_unrelated_client": "It seems that remote data has been created by an unrelated AEP instance. If you want to sync to it, disable sync now and set it up again.",
   "panel@pages@Sync@sync_tampered_data": "It seems that remote data has either been tampered with or reset to an older revision. Remove remote data to fix this issue.",
   "panel@pages@Sync@sync_master_password_required": "Initial sync requires passwords to be unlocked, please click \"Upload now\" to retry.",
-  "panel@pages@learn_more": "Learn more…",
-  "allpasswords@components@GlobalActions@export": "Export password definitions to a file",
-  "allpasswords@components@GlobalActions@import": "Import password definitions from a file",
-  "allpasswords@components@GlobalActions@print": "Print",
-  "allpasswords@components@GlobalActions@import_with_master": "It seems that this backup was created with a different master password. It can still be imported, all generated passwords will be converted to stored passwords however.",
-  "allpasswords@components@GlobalActions@import_confirm": "Your existing passwords might get overwritten. Are you sure you want to proceed?",
-  "allpasswords@components@PasswordInfo@password_type_stored": "Stored password, recovery code below",
-  "allpasswords@components@PasswordInfo@recovery_code_explanation": "Recovery codes can be entered instead of the password when adding a stored password. They are safe to print, decryption is only possible with the right master password.",
-  "allpasswords@components@SiteInfo@aliases_label": "Aliases:"
+  "panel@pages@learn_more": "Learn more…"
 };/*
  * This Source Code is subject to the terms of the Mozilla Public License
  * version 2.0 (the "License"). You can obtain a copy of the License at
@@ -7920,6 +7978,7 @@ var script$c = {
       upper: getProp("upper", true),
       number: getProp("number", true),
       symbol: getProp("symbol", true),
+      type_aep: getProp("type_aep", false),
       charsets: "",
       charsetsError: null,
       keepNotes: !!this.password
@@ -7964,6 +8023,7 @@ var script$c = {
         upper: this.upper,
         number: this.number,
         symbol: this.symbol,
+        type_aep: this.type_aep,
         notes: this.keepNotes ? this.password.notes : null
       }, this.options.replacing).then(function (pwdList) {
         _this2.$app.pwdList = pwdList;
@@ -8271,6 +8331,48 @@ var __vue_render__$c = function() {
                 }
               }),
               _vm._v("+^;")
+            ])
+          ]),
+          _c("div", { staticClass: "charsets-container" }, [
+            _c("label", { attrs: { title: _vm.$t("type_aep_title") } }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.type_aep,
+                    expression: "type_aep"
+                  }
+                ],
+                attrs: { type: "checkbox" },
+                domProps: {
+                  checked: Array.isArray(_vm.type_aep)
+                    ? _vm._i(_vm.type_aep, null) > -1
+                    : _vm.type_aep
+                },
+                on: {
+                  change: function($event) {
+                    var $$a = _vm.type_aep,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false;
+                    if (Array.isArray($$a)) {
+                      var $$v = null,
+                        $$i = _vm._i($$a, $$v);
+                      if ($$el.checked) {
+                        $$i < 0 && (_vm.type_aep = $$a.concat([$$v]));
+                      } else {
+                        $$i > -1 &&
+                          (_vm.type_aep = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)));
+                      }
+                    } else {
+                      _vm.type_aep = $$c;
+                    }
+                  }
+                }
+              }),
+              _vm._v(_vm._s(_vm.$t("type_aep_label")))
             ])
           ]),
           _c("validated-input", {
@@ -8874,8 +8976,8 @@ var script$g = {
       var tooltip = "";
       var password = this.password;
 
-      if (password.type == "generated2") {
-        tooltip = this.$t("password_type_generated2");
+      if (password.type.indexOf("generated") == 0) {
+        tooltip = this.$t("password_type_" + password.type);
         tooltip += "\n" + this.$t("password_length");
         tooltip += " " + password.length;
         tooltip += "\n" + this.$t("allowed_characters");
@@ -11953,13 +12055,14 @@ var __vue_render__$x = function() {
         "div",
         { staticClass: "password-info" },
         [
-          _vm.password.type == "generated2"
+          _vm.password.type.indexOf("generated") == 0
             ? [
                 _c("div", { staticClass: "password-type" }, [
                   _vm._v(
                     _vm._s(
                       _vm.$t(
-                        "/(panel)(components)(PasswordEntry)password_type_generated2"
+                        "/(panel)(components)(PasswordEntry)password_type_" +
+                          _vm.password.type
                       )
                     )
                   )
