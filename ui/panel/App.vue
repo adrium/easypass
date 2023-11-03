@@ -15,8 +15,7 @@
 
     <ChangeMaster v-if="masterPasswordState == 'unset' || (masterPasswordState == 'set' && resettingMaster)" />
     <EnterMaster v-else-if="masterPasswordState == 'set'" />
-    <DeprecationNote v-if="masterPasswordState == 'known' && !deprecationAccepted" />
-    <div v-else-if="masterPasswordState == 'known' && deprecationAccepted" class="tabs">
+    <div v-else-if="masterPasswordState == 'known'" class="tabs">
       <nav v-keyboard-navigation:tab class="tablist" role="list">
         <div />
 
@@ -72,7 +71,6 @@ import {port} from "../messaging.js";
 import {masterPassword, passwords, ui, sync} from "../proxy.js";
 import EnterMaster from "./pages/EnterMaster.vue";
 import ChangeMaster from "./pages/ChangeMaster.vue";
-import DeprecationNote from "./pages/DeprecationNote.vue";
 import PasswordList from "./pages/PasswordList.vue";
 import SelectSite from "./pages/SelectSite.vue";
 import Settings from "./pages/Settings.vue";
@@ -95,7 +93,6 @@ export default {
   components: {
     ChangeMaster,
     EnterMaster,
-    DeprecationNote,
     PasswordList,
     SelectSite,
     Settings,
@@ -108,7 +105,6 @@ export default {
     return {
       unknownError: null,
       resettingMaster: false,
-      deprecationAccepted: false,
       currentPage: "password-list",
       site: null,
       origSite: null,
@@ -133,9 +129,8 @@ export default {
   created: async function()
   {
     let data = {};
-    [data.origSite, data.deprecationAccepted, data.masterPasswordState] = await Promise.all([
+    [data.origSite, data.masterPasswordState] = await Promise.all([
       ui.getCurrentHost(),
-      ui.isDeprecationAccepted(),
       masterPassword.getState()
     ]);
 

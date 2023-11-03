@@ -100,5 +100,5 @@ export const sync = proxy("sync", [
 ]);
 
 export const ui = proxy("ui", [
-  "getCurrentHost", "isDeprecationAccepted", "acceptDeprecation", "showAllPasswords", "getLink", "openLink"
+  "getCurrentHost", "showAllPasswords", "getLink", "openLink"
 ]);
