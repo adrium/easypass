@@ -42,9 +42,6 @@ export default {
   methods: {
     async exportCSVData()
     {
-      if (!await this.$root.confirm(this.$t("csv_export_confirmation")))
-        return;
-
       this.$root.inProgress = true;
       try
       {
