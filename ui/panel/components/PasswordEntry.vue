@@ -36,10 +36,6 @@
       v-if="modal == 'menu'" :password="password"
       @cancel="modal = null"
     />
-    <QRCode
-      v-if="modal == 'qrcode'" :password="password" :value="value"
-      @cancel="modal = null"
-    />
     <NotesEditor
       v-if="modal == 'notes'" :password="password"
       @cancel="modal = null"
@@ -54,7 +50,6 @@ import {set as clipboardSet} from "../../clipboard.js";
 import {passwords, passwordRetrieval} from "../../proxy.js";
 import GeneratedPassword from "./GeneratedPassword.vue";
 import NotesEditor from "./NotesEditor.vue";
-import QRCode from "./QRCode.vue";
 import PasswordMenu from "./PasswordMenu.vue";
 
 export default {
@@ -63,7 +58,6 @@ export default {
   components: {
     GeneratedPassword,
     NotesEditor,
-    QRCode,
     PasswordMenu
   },
   props: {
@@ -178,14 +172,6 @@ export default {
       this.modal = null;
       clipboardSet(this.password.name);
       this.$parent.showPasswordMessage("username_copied");
-    },
-    showQRCode()
-    {
-      this.modal = null;
-      this.ensureValue().then(() =>
-      {
-        this.modal = "qrcode";
-      }).catch(error => this.$parent.showPasswordMessage(error));
     },
     showNotes()
     {

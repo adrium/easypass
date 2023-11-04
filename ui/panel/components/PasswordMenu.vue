@@ -19,10 +19,6 @@
         {{ $t("to_clipboard_username") }}
       </a>
     </div>
-    <a href="#" class="password-menu-entry" @click.prevent="$parent.showQRCode">
-      <span class="show-qrcode-link iconic-link" />
-      {{ $t("show_qrcode") }}
-    </a>
     <a href="#" class="password-menu-entry" @click.prevent="$parent.showNotes">
       <span class="notes-link iconic-link" />
       {{ $t(password.notes ? "edit_notes" : "add_notes") }}

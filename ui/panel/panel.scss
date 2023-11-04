@@ -299,11 +299,6 @@ a.iconic-link:hover
   background-image: url("../images/ionicons/md-clipboard.svg");
 }
 
-.show-qrcode-link
-{
-  background-image: url("../images/ionicons/md-barcode.svg");
-}
-
 .notes-link
 {
   background-image: url("../images/ionicons/md-paper.svg");
@@ -447,13 +442,6 @@ a.iconic-link:hover
 #recoveryInput
 {
   min-height: 100px;
-}
-
-.qrcode-canvas-container
-{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 #notes-textarea
