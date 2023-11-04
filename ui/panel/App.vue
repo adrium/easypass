@@ -34,13 +34,6 @@
         />
 
         <IconicLink
-          class="tab sync" role="listitem"
-          :class="{active: currentPage == 'sync', failed: $root.sync.error && $root.sync.error != 'sync_connection_error'}"
-          :title="$t('sync')"
-          @click="currentPage = 'sync'"
-        />
-
-        <IconicLink
           class="tab settings" role="listitem"
           :class="{active: currentPage == 'settings'}"
           :title="$t('settings')"
@@ -57,7 +50,6 @@
       </nav>
       <SelectSite v-if="currentPage == 'select-site'" @selected="currentPage = 'password-list'" />
       <PasswordList v-if="currentPage == 'password-list'" />
-      <Sync v-else-if="currentPage == 'sync'" />
       <Settings v-else-if="currentPage == 'settings'" />
     </div>
   </div>
@@ -68,20 +60,18 @@
 
 import {getSiteDisplayName, keyboardNavigationType} from "../common.js";
 import {port} from "../messaging.js";
-import {masterPassword, passwords, ui, sync} from "../proxy.js";
+import {masterPassword, passwords, ui} from "../proxy.js";
 import EnterMaster from "./pages/EnterMaster.vue";
 import ChangeMaster from "./pages/ChangeMaster.vue";
 import PasswordList from "./pages/PasswordList.vue";
 import SelectSite from "./pages/SelectSite.vue";
 import Settings from "./pages/Settings.vue";
-import Sync from "./pages/Sync.vue";
 import Confirm from "../components/Confirm.vue";
 import UnknownError from "../components/UnknownError.vue";
 
 const pages = [
   "select-site",
   "password-list",
-  "sync",
   "settings"
 ];
 
@@ -96,7 +86,6 @@ export default {
     PasswordList,
     SelectSite,
     Settings,
-    Sync,
     Confirm,
     UnknownError
   },
@@ -110,7 +99,6 @@ export default {
       origSite: null,
       pwdList: null,
       masterPasswordState: null,
-      sync: {}
     };
   },
   computed: {
@@ -141,27 +129,9 @@ export default {
 
     // Update all data at once to prevent inconsistent intermediate states
     Object.assign(this, data);
-
-    await this.updateSyncState();
-    port.on("syncUpdate", () => this.updateSyncState());
   },
   methods:
   {
-    updateSyncState: async function()
-    {
-      let [syncData, isSyncing] = await Promise.all([
-        sync.getSyncData(),
-        sync.isSyncing()
-      ]);
-
-      this.sync = {
-        provider: syncData.provider || null,
-        username: syncData.username || null,
-        lastSync: syncData.lastSync || null,
-        error: syncData.error || null,
-        isSyncing
-      };
-    },
     testUnknownError()
     {
       this.showUnknownError(new Error("Unexpected error triggered via Ctrl+E"));

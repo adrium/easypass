@@ -94,11 +94,6 @@ export const recoveryCodes = proxy("recoveryCodes", [
   "getValidChars", "getCode", "formatCode", "isValid", "decodeCode"
 ]);
 
-export const sync = proxy("sync", [
-  "authorize", "getManualAuthURL", "manualAuthorization", "disableSync", "sync",
-  "getSyncData", "isSyncing"
-]);
-
 export const ui = proxy("ui", [
   "getCurrentHost", "showAllPasswords", "getLink", "openLink"
 ]);
