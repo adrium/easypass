@@ -48,6 +48,18 @@ const generated2 = {
   password: "$X*RR~V}?;FY[T|~"
 };
 
+const generated3 = {
+  type: "generatedAep",
+  site: "example.com",
+  name: "aep",
+  length: 8,
+  lower: true,
+  upper: true,
+  number: true,
+  symbol: true,
+  password: "I7@cyQ%8"
+};
+
 const stored1 = {
   site: "example.com",
   name: "foo",
@@ -342,6 +354,9 @@ describe("passwords.js", () =>
 
     await addGenerated(generated2);
     expect(await getPassword(generated2)).to.equal(generated2.password);
+
+    await addGenerated(generated3);
+    expect(await getPassword(generated3)).to.equal(generated3.password);
 
     await removePassword(generated2);
     await addStored(stored2);
