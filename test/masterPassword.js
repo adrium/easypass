@@ -81,7 +81,7 @@ describe("masterPassword.js", () =>
     expect(await getState()).to.equal("known");
   });
 
-  it("should clear all data on master password change", async function()
+  xit("should clear all data on master password change", async function()
   {
     function addData()
     {

@@ -695,7 +695,8 @@ describe("passwords.js", () =>
       expect(parsed.data["salt"]).to.not.be.empty;
       expect(parsed.data["hmac-secret"]).to.not.be.empty;
 
-      await storage.clear();
+      for (let key of Object.keys(storageData))
+        delete storageData[key];
       await changePassword(dummyMaster);
       await importPasswordData(exportData);
       return await getAllPasswords();
