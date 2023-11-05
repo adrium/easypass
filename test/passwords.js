@@ -23,6 +23,7 @@ import "../lib/importers/lastPass.js";
 const dummyMaster = "foobar";
 
 const generated1 = {
+  type: "generated2",
   site: "example.com",
   name: "foo",
   length: 8,
@@ -34,6 +35,7 @@ const generated1 = {
 };
 
 const generated2 = {
+  type: "generated2",
   site: "example.com",
   name: "bar",
   revision: "2",
