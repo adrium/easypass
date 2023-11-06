@@ -19,6 +19,10 @@
         {{ $t("to_clipboard_username") }}
       </a>
     </div>
+    <a href="#" class="password-menu-entry" @click.prevent="$parent.showPwShow">
+      <span class="show-pwshow-link iconic-link" />
+      {{ $t("show_pwshow") }}
+    </a>
     <a href="#" class="password-menu-entry" @click.prevent="$parent.showNotes">
       <span class="notes-link iconic-link" />
       {{ $t(password.notes ? "edit_notes" : "add_notes") }}

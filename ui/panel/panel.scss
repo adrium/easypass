@@ -297,6 +297,11 @@ a.iconic-link:hover
   background-image: url("../images/ionicons/md-clipboard.svg");
 }
 
+.show-pwshow-link
+{
+  background-image: url("../images/ionicons/md-eye.svg");
+}
+
 .notes-link
 {
   background-image: url("../images/ionicons/md-paper.svg");
@@ -441,6 +446,13 @@ a.iconic-link:hover
 #recoveryInput
 {
   min-height: 100px;
+}
+
+.pwshow-container input
+{
+  text-align: center;
+  font-family: $font-family-monospace;
+  line-height: 1.5em;
 }
 
 #notes-textarea

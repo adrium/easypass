@@ -12,6 +12,10 @@
         :class="{menuactive: modal == 'menu'}"
         :title="$t('password_menu')" @click="modal = 'menu'"
       />
+      <IconicLink
+        class="show-pwshow-link iconic-link" tabindex="3"
+        :title="$t('show_pwshow')" @click="showPwShow"
+      />
       <span class="user-name-container" tabindex="1" :title="tooltip" @click="fillIn" @keyup.enter="fillIn">
         <span>{{ password.name }}</span>
         <span v-if="password.revision" class="password-revision">{{ password.revision }}</span>
@@ -24,6 +28,10 @@
     />
     <PasswordMenu
       v-if="modal == 'menu'" :password="password"
+      @cancel="modal = null"
+    />
+    <PwShow
+      v-if="modal == 'pwshow'" :password="password" :value="value"
       @cancel="modal = null"
     />
     <NotesEditor
@@ -40,6 +48,7 @@ import {set as clipboardSet} from "../../clipboard.js";
 import {passwords, passwordRetrieval} from "../../proxy.js";
 import GeneratedPassword from "./GeneratedPassword.vue";
 import NotesEditor from "./NotesEditor.vue";
+import PwShow from "./PwShow.vue";
 import PasswordMenu from "./PasswordMenu.vue";
 
 export default {
@@ -48,6 +57,7 @@ export default {
   components: {
     GeneratedPassword,
     NotesEditor,
+    PwShow,
     PasswordMenu
   },
   props: {
@@ -162,6 +172,14 @@ export default {
       this.modal = null;
       clipboardSet(this.password.name);
       this.$parent.showPasswordMessage("username_copied");
+    },
+    showPwShow()
+    {
+      this.modal = null;
+      this.ensureValue().then(() =>
+      {
+        this.modal = "pwshow";
+      }).catch(error => this.$parent.showPasswordMessage(error));
     },
     showNotes()
     {
