@@ -20,7 +20,7 @@
       <IconicLink ref="to-clipboard" class="to-clipboard-link" :title="$t('/(panel)(components)(PasswordMenu)to_clipboard')" @click="copy" />
       <span class="user-name-container">
         <span class="user-name">{{ password.name }}</span>
-        <span v-if="password.revision" class="password-revision">{{ password.revision }}</span>
+        <span v-if="password.revision" class="password-revision">#{{ password.revision }}</span>
       </span>
       <span v-if="showPasswords && value" class="password-value">{{ value }}</span>
       <IconicLink class="password-remove-link" :title="$t('/(panel)(components)(PasswordMenu)remove_password')" @click="removePassword" />
@@ -29,7 +29,7 @@
       <template v-if="password.type == 'generated2'">
         <div class="password-type">{{ $t("/(panel)(components)(PasswordEntry)password_type_generated2") }}</div>
         <div>{{ $t("/(panel)(components)(PasswordEntry)password_length") }} {{ password.length }}</div>
-        <div>{{ $t("/(panel)(components)(PasswordEntry)allowed_characters") }}  {{ allowedChars }}</div>
+        <div>{{ $t("/(panel)(components)(PasswordEntry)allowed_characters") }}  [{{ allowedChars }}]</div>
       </template>
       <template v-else-if="password.type == 'stored'">
         <div class="password-type">
