@@ -34,6 +34,12 @@
         <label><input v-model="number" type="checkbox">789</label>
         <label><input v-model="symbol" type="checkbox">+^;</label>
       </div>
+      <div class="charsets-container">
+        <label :title="$t('type_aep_title')">
+          <input v-model="type" type="checkbox" false-value="generated2" true-value="generatedAep">
+          {{ $t("type_aep_label") }}
+        </label>
+      </div>
 
       <!-- Charset checkboxes are aggregated into a single hidden input to simplify validation -->
       <ValidatedInput
@@ -103,6 +109,7 @@ export default {
       upper: getProp("upper", true),
       number: getProp("number", true),
       symbol: getProp("symbol", true),
+      type: getProp("type", "generated2"),
       charsets: "",
       charsetsError: null,
       keepNotes: !!this.password
@@ -146,6 +153,7 @@ export default {
 
       passwords.addGenerated({
         site: this.$root.site,
+        type: this.type,
         name: this.name,
         revision,
         length: this.length,

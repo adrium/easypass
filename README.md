@@ -14,6 +14,7 @@ Differences to the original version:
 * Show the passwords concealed to use drag and drop
 * Smaller theme with accent color
 * Sync works, but disabled due to missing API keys
+* Add new AEP password generation method to ensure 2 characters of every charset and uses less symbols
 
 Using multiple master passwords
 -------------------------------

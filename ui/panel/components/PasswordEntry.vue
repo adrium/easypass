@@ -83,9 +83,9 @@ export default {
     {
       let tooltip = "";
       let password = this.password;
-      if (password.type == "generated2")
+      if (password.type.startsWith("generated"))
       {
-        tooltip = this.$t("password_type_generated2");
+        tooltip = this.$t("password_type_" + password.type);
 
         tooltip += "\n" + this.$t("password_length");
         tooltip += " " + password.length;
