@@ -14,6 +14,8 @@ $hover-background: rgba($accent-color, 10%);
 
 $text-color: #000;
 $background-color: #fff;
+$text-color-dark: #ccc;
+$background-color-dark: #333;
 $warning-background: #faa;
 $success-background: #cfc;
 $error-text: #f44;
@@ -120,6 +122,12 @@ body
 {
   background-color: $background-color;
   color: $text-color;
+
+  @media (prefers-color-scheme: dark)
+  {
+    background-color: $background-color-dark;
+    color: $text-color-dark;
+  }
 }
 
 body,
@@ -128,6 +136,15 @@ button
 {
   font-family: $font-family;
   font-size: $font-size;
+}
+
+input,
+button
+{
+  @media (prefers-color-scheme: dark)
+  {
+    filter: invert(0.8);
+  }
 }
 
 a
@@ -230,13 +247,19 @@ input[type="checkbox"]:checked
   z-index: 10000;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 70%);
+  background-color: rgba(0, 0, 0, 33%);
 }
 
 .modalOverlay-inner
 {
   margin: auto;
   background-color: $background-color;
+  box-shadow: 0 2px 8px #0009;
+
+  @media (prefers-color-scheme: dark)
+  {
+    background-color: $background-color-dark;
+  }
 
   &.stretch
   {
