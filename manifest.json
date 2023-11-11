@@ -15,7 +15,7 @@
 
   "author": "Adrium / Wladimir Palant",
   "homepage_url": "https://github.com/adrium/easypass",
-  "version": "2.2.6",
+  "version": "2.2.6.1",
   "permissions": [
     "activeTab",
     "storage",
