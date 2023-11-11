@@ -537,22 +537,22 @@ a.iconic-link:hover {
   padding-right: 5px;
 }
 
-.add-password-link {
+.add-password-link::before {
+  content: "";
   min-height: 20px;
   background-image: url("../images/ionicons/md-add-circle-outline.svg");
   background-size: 20px;
   background-repeat: no-repeat;
 }
-:root:not([dir=rtl]) .add-password-link {
+:root:not([dir=rtl]) .add-password-link::before {
   padding-left: 25px;
 }
-:root[dir=rtl] .add-password-link {
+:root[dir=rtl] .add-password-link::before {
   padding-right: 25px;
 }
 @media (prefers-color-scheme: dark) {
-  .add-password-link {
-    color: #eeaa88;
-    filter: invert(1);
+  .add-password-link::before {
+    filter: invert(0.8);
   }
 }
 
