@@ -379,8 +379,9 @@ a.iconic-link:hover
   }
 }
 
-.add-password-link
+.add-password-link::before
 {
+  content: "";
   min-height: $icon-size;
   @include padding-inline-start($icon-size + $inline-spacing);
   background-image: url("../images/ionicons/md-add-circle-outline.svg");
@@ -389,8 +390,7 @@ a.iconic-link:hover
 
   @media (prefers-color-scheme: dark)
   {
-    color: #{invert($accent-color)};
-    filter: invert(1);
+    filter: invert(0.8);
   }
 }
 
