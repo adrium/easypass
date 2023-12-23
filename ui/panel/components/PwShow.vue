@@ -19,6 +19,10 @@
     <div class="pwshow-container">
       <input id="pwshow-password" spellcheck="false" autocomplete="off" :value="value" @focus="$event.target.select()">
     </div>
+    <label v-if="password.notes" class="block-start">{{ $t(".(NotesEditor)notes_label") }}</label>
+    <div v-if="password.notes" class="pwshow-container notes">
+      {{ password.notes }}
+    </div>
   </ModalOverlay>
 </template>
 

@@ -466,9 +466,16 @@ a.iconic-link:hover
 
 .pwshow-container input
 {
+  width: 95%;
   text-align: center;
   font-family: $font-family-monospace;
   line-height: 1.5em;
+}
+
+.pwshow-container.notes
+{
+  font-family: $font-family-monospace;
+  white-space: pre-wrap;
 }
 
 #notes-textarea
