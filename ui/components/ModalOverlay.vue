@@ -67,7 +67,7 @@ export default {
   {
     if (activeModal == this)
     {
-      document.body.style.minHeight = "";
+      document.querySelector("div.tabs").style.minHeight = "";
       if (this.savedActiveElement)
         this.savedActiveElement.focus();
       activeModal = null;
@@ -86,7 +86,7 @@ export default {
       let style = window.getComputedStyle(this.$el, "");
       let height = this.$refs.inner.offsetHeight + parseInt(style.paddingTop) +
         parseInt(style.paddingBottom);
-      document.body.style.minHeight = height + "px";
+      document.querySelector("div.tabs").style.minHeight = height + "px";
 
       if (this.focusCancel)
         this.$refs.cancel.$el.focus();
