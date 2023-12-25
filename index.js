@@ -4560,7 +4560,7 @@ var script$v = {
   {
     if (activeModal == this)
     {
-      document.body.style.minHeight = "";
+      document.querySelector("div.tabs").style.minHeight = "";
       if (this.savedActiveElement)
       this.savedActiveElement.focus();
       activeModal = null;
@@ -4579,7 +4579,7 @@ var script$v = {
       var style = window.getComputedStyle(this.$el, "");
       var height = this.$refs.inner.offsetHeight + parseInt(style.paddingTop) +
       parseInt(style.paddingBottom);
-      document.body.style.minHeight = height + "px";
+      document.querySelector("div.tabs").style.minHeight = height + "px";
 
       if (this.focusCancel)
       this.$refs.cancel.$el.focus();
@@ -4918,7 +4918,7 @@ var _hoisted_3$f = {
 
 var _hoisted_4$d = { "class": "button-container" };
 var _hoisted_5$9 = { type: "submit" };
-var _hoisted_6$6 = {
+var _hoisted_6$7 = {
   key: 0,
   type: "reset" };
 
@@ -4954,7 +4954,7 @@ function render$s(_ctx, _cache, $props, $setup, $data, $options) {
       ur("div", _hoisted_4$d, [
       ur("button", _hoisted_5$9, u(_ctx.$t("submit")), 1 /* TEXT */),
       $props.cancelable ? (
-      Yo(), or("button", _hoisted_6$6, u(_ctx.$t("/cancel")), 1 /* TEXT */)) :
+      Yo(), or("button", _hoisted_6$7, u(_ctx.$t("/cancel")), 1 /* TEXT */)) :
       hr("v-if", true)]),
 
       dt(_ctx.$slots, "default")];}),
@@ -7491,8 +7491,8 @@ var _hoisted_5$8 = {
   key: 1,
   "class": "error" };
 
-var _hoisted_6$5 = { "class": "button-container" };
-var _hoisted_7$3 = { type: "submit" };
+var _hoisted_6$6 = { "class": "button-container" };
+var _hoisted_7$4 = { type: "submit" };
 
 function render$p(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_ExternalLink = jo("ExternalLink");
@@ -7557,8 +7557,8 @@ function render$p(_ctx, _cache, $props, $setup, $data, $options) {
       $data.newMasterRepeatError ? (
       Yo(), or("div", _hoisted_5$8, u($data.newMasterRepeatError), 1 /* TEXT */)) :
       hr("v-if", true),
-      ur("div", _hoisted_6$5, [
-      ur("button", _hoisted_7$3, u(_ctx.$t("submit")), 1 /* TEXT */),
+      ur("div", _hoisted_6$6, [
+      ur("button", _hoisted_7$4, u(_ctx.$t("submit")), 1 /* TEXT */),
       $options.hasPassword ?
       go((Yo(), or("button", {
         key: 0,
@@ -7867,11 +7867,11 @@ var _hoisted_3$c = {
 
 var _hoisted_4$a = { "class": "length-container" };
 var _hoisted_5$7 = { "class": "password-length-value" };
-var _hoisted_6$4 = {
+var _hoisted_6$5 = {
   "class": "block-start",
   "for": "charset-lower" };
 
-var _hoisted_7$2 = { "class": "charsets-container" };
+var _hoisted_7$3 = { "class": "charsets-container" };
 var _hoisted_8$2 = /*#__PURE__*/fr("abc");
 var _hoisted_9$1 = /*#__PURE__*/fr("XYZ");
 var _hoisted_10$1 = /*#__PURE__*/fr("789");
@@ -7944,8 +7944,8 @@ function render$m(_ctx, _cache, $props, $setup, $data, $options) {
 
           ur("span", _hoisted_5$7, u($data.length), 1 /* TEXT */)]),
 
-          ur("label", _hoisted_6$4, u(_ctx.$t("allowed_characters_label")), 1 /* TEXT */),
-          ur("div", _hoisted_7$2, [
+          ur("label", _hoisted_6$5, u(_ctx.$t("allowed_characters_label")), 1 /* TEXT */),
+          ur("div", _hoisted_7$3, [
           ur("label", null, [
           go(ur("input", {
             id: "charset-lower",
@@ -8153,6 +8153,14 @@ var _hoisted_4$8 = {
   "for": "pwshow-password" };
 
 var _hoisted_5$5 = { "class": "pwshow-container" };
+var _hoisted_6$4 = {
+  key: 0,
+  "class": "block-start" };
+
+var _hoisted_7$2 = {
+  key: 1,
+  "class": "pwshow-container notes" };
+
 
 function render$k(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_ModalOverlay = jo("ModalOverlay");
@@ -8187,8 +8195,14 @@ function render$k(_ctx, _cache, $props, $setup, $data, $options) {
         autocomplete: "off",
         value: $props.value,
         onFocus: _cache[2] || (_cache[2] = function ($event) {return $event.target.select();}) },
-      null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"])])];}),
+      null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"])]),
 
+      $props.password.notes ? (
+      Yo(), or("label", _hoisted_6$4, u(_ctx.$t(".(NotesEditor)notes_label")), 1 /* TEXT */)) :
+      hr("v-if", true),
+      $props.password.notes ? (
+      Yo(), or("div", _hoisted_7$2, u($props.password.notes), 1 /* TEXT */)) :
+      hr("v-if", true)];}),
 
     _: 1 /* STABLE */ });
 
